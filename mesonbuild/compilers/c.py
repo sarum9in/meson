@@ -1121,7 +1121,7 @@ class VisualStudioCCompiler(CCompiler):
         pdbarr += ['pdb']
         return ['/DEBUG', '/PDB:' + '.'.join(pdbarr)]
 
-    def get_link_whole_for(self, args):
+    def get_link_whole_archive_for(self, args):
         # Only since VS2015
         args = listify(args)
         return ['/WHOLEARCHIVE:' + x for x in args]

@@ -812,7 +812,7 @@ class Compiler:
     def get_std_shared_module_link_args(self):
         return self.get_std_shared_lib_link_args()
 
-    def get_link_whole_for(self, args):
+    def get_link_whole_archive_for(self, args):
         if isinstance(args, list) and not args:
             return []
         raise EnvironmentException('Language %s does not support linking whole archives.' % self.get_display_language())
@@ -1051,7 +1051,7 @@ class GnuCompiler:
     def get_std_shared_lib_link_args(self):
         return ['-shared']
 
-    def get_link_whole_for(self, args):
+    def get_link_whole_archive_for(self, args):
         return ['-Wl,--whole-archive'] + args + ['-Wl,--no-whole-archive']
 
     def gen_vs_module_defs_args(self, defsfile):
@@ -1148,7 +1148,7 @@ class ClangCompiler:
             return ['-bundle', '-Wl,-undefined,dynamic_lookup']
         return ['-shared']
 
-    def get_link_whole_for(self, args):
+    def get_link_whole_archive_for(self, args):
         if self.clang_type == CLANG_OSX:
             result = []
             for a in args:

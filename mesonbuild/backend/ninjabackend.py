@@ -2451,9 +2451,9 @@ rule FORTRAN_DEP_HACK
             raise RuntimeError('Unknown build target type.')
         return commands
 
-    def get_link_whole_args(self, linker, target):
+    def get_link_whole_archive_args(self, linker, target):
         target_args = self.build_target_link_arguments(linker, target.link_whole_targets)
-        return linker.get_link_whole_for(target_args) if len(target_args) else []
+        return linker.get_link_whole_archive_for(target_args) if target_args else []
 
     def generate_link(self, target, outfile, outname, obj_list, linker, extra_args=[]):
         if isinstance(target, build.StaticLibrary):
@@ -2497,7 +2497,7 @@ rule FORTRAN_DEP_HACK
         # Archives that are copied wholesale in the result. Must be before any
         # other link targets so missing symbols from whole archives are found in those.
         if not isinstance(target, build.StaticLibrary):
-            commands += self.get_link_whole_args(linker, target)
+            commands += self.get_link_whole_archive_args(linker, target)
 
         if not isinstance(target, build.StaticLibrary):
             # Add link args added using add_project_link_arguments()
