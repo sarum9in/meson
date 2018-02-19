@@ -931,7 +931,7 @@ class Vs2010Backend(backends.Backend):
         for t in target.get_dependencies():
             lobj = self.build.targets[t.get_id()]
             linkname = os.path.join(down, self.get_target_filename_for_linking(lobj))
-            if t in target.link_whole_targets:
+            if t in target.link_whole_targets and isinstance(t, build.StaticLibrary):
                 # /WHOLEARCHIVE:foo must go into AdditionalOptions
                 extra_link_args += compiler.get_link_whole_archive_for(linkname)
                 # To force Visual Studio to build this project even though it

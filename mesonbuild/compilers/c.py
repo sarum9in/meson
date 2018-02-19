@@ -1126,6 +1126,10 @@ class VisualStudioCCompiler(CCompiler):
         args = listify(args)
         return ['/WHOLEARCHIVE:' + x for x in args]
 
+    def get_link_whole_shared_for(self, args):
+        # No special handling is required
+        return args
+
     def get_instruction_set_args(self, instruction_set):
         if self.is_64:
             return vs64_instruction_set_args.get(instruction_set, None)

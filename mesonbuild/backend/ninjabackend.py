@@ -2452,8 +2452,14 @@ rule FORTRAN_DEP_HACK
         return commands
 
     def get_link_whole_archive_args(self, linker, target):
-        target_args = self.build_target_link_arguments(linker, target.link_whole_targets)
+        archives = [t for t in target.link_whole_targets if isinstance(t, build.StaticLibrary)]
+        target_args = self.build_target_link_arguments(linker, archives)
         return linker.get_link_whole_archive_for(target_args) if target_args else []
+
+    def get_link_whole_shared_args(self, linker, target):
+        shared_libs = [t for t in target.link_whole_targets if isinstance(t, build.SharedLibrary)]
+        target_args = self.build_target_link_arguments(linker, shared_libs)
+        return linker.get_link_whole_shared_for(target_args) if target_args else []
 
     def generate_link(self, target, outfile, outname, obj_list, linker, extra_args=[]):
         if isinstance(target, build.StaticLibrary):
@@ -2521,6 +2527,8 @@ rule FORTRAN_DEP_HACK
             dependencies = []
         else:
             dependencies = target.get_dependencies()
+        # Must link with link_whole shared libraries first to preserve their arguments.
+        commands += self.get_link_whole_shared_args(linker, target)
         commands += self.build_target_link_arguments(linker, dependencies)
         # For 'automagic' deps: Boost and GTest. Also dependency('threads').
         # pkg-config puts the thread flags itself via `Cflags:`

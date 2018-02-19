@@ -817,6 +817,11 @@ class Compiler:
             return []
         raise EnvironmentException('Language %s does not support linking whole archives.' % self.get_display_language())
 
+    def get_link_whole_shared_for(self, args):
+        if isinstance(args, list) and not args:
+            return []
+        raise EnvironmentException('Language %s does not support linking whole shared libraries.' % self.get_display_language())
+
     # Compiler arguments needed to enable the given instruction set.
     # May be [] meaning nothing needed or None meaning the given set
     # is not supported.
@@ -1054,6 +1059,9 @@ class GnuCompiler:
     def get_link_whole_archive_for(self, args):
         return ['-Wl,--whole-archive'] + args + ['-Wl,--no-whole-archive']
 
+    def get_link_whole_shared_for(self, args):
+        return ['-Wl,--no-as-needed'] + args + ['-Wl,--as-needed'] # FIXME
+
     def gen_vs_module_defs_args(self, defsfile):
         if not isinstance(defsfile, str):
             raise RuntimeError('Module definitions file should be str')
@@ -1155,6 +1163,9 @@ class ClangCompiler:
                 result += ['-Wl,-force_load', a]
             return result
         return ['-Wl,--whole-archive'] + args + ['-Wl,--no-whole-archive']
+
+    def get_link_whole_shared_for(self, args):
+        return ['-Wl,--no-as-needed'] + args + ['-Wl,--as-needed'] # FIXME
 
     def get_instruction_set_args(self, instruction_set):
         return gnulike_instruction_set_args.get(instruction_set, None)
