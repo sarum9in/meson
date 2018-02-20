@@ -14,6 +14,7 @@
 
 # This file contains the detection logic for miscellaneous external dependencies.
 
+import enum
 import glob
 import os
 
@@ -246,6 +247,8 @@ class BoostDependency(ExternalDependency):
 
         if include_dir and include_dir not in self.compiler.get_default_include_dirs():
             args.append("".join(self.compiler.get_include_args(include_dir, True)))
+        for module in self.requested_modules:
+            args.extend(self._get_linkage_args(module, _BoostLinkage.DYNAMIC)) # FIXME
         return args
 
     def get_requested(self, kwargs):
@@ -487,6 +490,59 @@ class BoostDependency(ExternalDependency):
 
     def need_threads(self):
         return 'thread' in self.requested_modules
+
+    @staticmethod
+    def _get_project_names(library):
+        '''Handles special cases for library -> project name mappings.'''
+        if library == 'coroutine':
+            return ['coroutines', 'coroutines2']
+        elif library == 'fiber':
+            return ['fibers']
+        elif library in ['graph', 'graph_parallel']:
+            return ['graph']
+        elif library.startswith('math_'):
+            return ['math_tr1']
+        elif library in ['numpy', 'numpy3']:
+            return ['numpy']
+        elif library in ['prg_exec_monitor', 'unit_test_framework']:
+            return ['test']
+        elif library in ['python', 'python3']:
+            return ['python']
+        elif library.startswith('stacktrace_'):
+            return ['stacktrace']
+        elif library in ['serialization', 'wserialization']:
+            return ['serialization']
+        else:
+            return [library]
+
+    @classmethod
+    def _get_linkage_args(cls, library, linkage):
+        projects = cls._get_project_names(library)
+        args = []
+        if linkage is _BoostLinkage.STATIC:
+            for project in projects:
+                if project in ['python', 'numpy']:
+                    args.append('BOOST_{}_STATIC_LIB'.format(project.upper()))
+                elif project == 'stacktrace':
+                    args.append('BOOST_STACKTRACE_LINK')
+        elif linkage is _BoostLinkage.DYNAMIC:
+            for project in projects:
+                if project in ['python', 'numpy']:
+                    args.append('BOOST_{}_DYNAMIC_LIB'.format(project.upper()))
+                else:
+                    if project == 'stacktrace' and library.startswith('stacktrace_'):
+                        stacktrace_impl = library[len('stacktrace_'):]
+                        args.append('BOOST_STACKTRACE_USE_{}'.format(stacktrace_impl.upper()))
+                    args.append('BOOST_{}_DYN_LINK'.format(project.upper()))
+        return list(map(lambda s: '-D' + s, args))
+
+
+@enum.unique
+class _BoostLinkage(enum.Enum):
+    STATIC = 'STATIC'
+    DYNAMIC = 'DYNAMIC'
+    # we don't support inline linkage since user is not specifying inline
+    # modules in the argument list
 
 
 # Generated with boost_names.py

@@ -1,10 +1,6 @@
 project('boosttest', 'cpp',
   default_options : ['cpp_std=c++11'])
 
-add_project_arguments(['-DBOOST_LOG_DYN_LINK'],
-  language : 'cpp'
-)
-
 dep = dependency('boost', required: false)
 if not dep.found()
   error('MESON_SKIP_TEST boost not found.')
