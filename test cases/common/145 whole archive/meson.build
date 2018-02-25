@@ -1,4 +1,4 @@
-project('whole archive', 'c')
+project('whole archive', ['c', 'cpp'])
 
 add_project_arguments('-I' + meson.source_root(), language : 'c')
 
@@ -30,3 +30,21 @@ subdir('sh_only_link_whole')
 subdir('exe2')
 # Test that both func1 and func2 are accessible from shared library
 test('prog2', exe2)
+
+# Test 3: link_whole without any references at all.
+# Plugins are self-registering in factory and no symbols are called from them.
+factory = static_library('factory', 'factory.cpp')
+plugin1 = static_library('plugin1', 'plugin1.cpp', pic : true)
+plugin2 = static_library('plugin2', 'plugin2.cpp', pic : true)
+exe3 = executable('exe3', 'plugins_test.cpp', link_with : factory, link_whole : [plugin1, plugin2])
+test('prog3', exe3)
+
+# Test 4: same as 3 but link into shared library first.
+shared_proxy = shared_library('shared_proxy', link_whole : [factory, plugin1, plugin2])
+exe4 = executable('exe4', 'plugins_test.cpp', link_with : shared_proxy)
+test('prog4', exe4)
+
+# Test 5: same as test 4 but use factory.cpp directly.
+shared_factory = shared_library('shared_factory', 'factory.cpp', link_whole : [plugin1, plugin2])
+exe5 = executable('exe5', 'plugins_test.cpp', link_with : shared_factory)
+test('prog5', exe5)
