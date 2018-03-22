@@ -2,6 +2,8 @@
 short-description: Installing targets
 ...
 
+TEST
+
 # Installing
 
 By default Meson will not install anything. Build targets can be installed by tagging them as installable in the definition.
