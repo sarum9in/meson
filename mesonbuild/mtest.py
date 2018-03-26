@@ -30,6 +30,10 @@ import signal
 import random
 from copy import deepcopy
 
+#import logging
+#logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s')
+#log = logging.getLogger('mtest')
+
 # GNU autotools interprets a return code of 77 from tests it executes to
 # mean that the test should be skipped.
 GNU_SKIP_RETURNCODE = 77
@@ -306,6 +310,9 @@ class TestHarness:
                     # errors avoid not being able to use the terminal.
                     os.setsid()
 
+            # Uncommenting this makes "fixes" the bug o.O
+            #print('run test stdout =', stdout, 'stderr =', stderr)
+            #print('run test')
             p = subprocess.Popen(cmd,
                                  stdout=stdout,
                                  stderr=stderr,
@@ -321,6 +328,7 @@ class TestHarness:
             else:
                 timeout = test.timeout
             try:
+                #print(datetime.datetime.now(), 'communicate test timeout =', timeout)
                 (stdo, stde) = p.communicate(timeout=timeout)
             except subprocess.TimeoutExpired:
                 if self.options.verbose:
@@ -348,6 +356,7 @@ class TestHarness:
                         # There's nothing we can do (maybe the process
                         # already died) so carry on.
                         pass
+                #print(datetime.datetime.now(), 'communicate test without timeout =', timeout)
                 (stdo, stde) = p.communicate()
             endtime = time.time()
             duration = endtime - starttime
@@ -434,6 +443,7 @@ TIMEOUT: %4d
         if not tests:
             return 0
         self.run_tests(tests)
+        #print(datetime.datetime.now(), 'Finished doit')
         return self.fail_count
 
     @staticmethod
@@ -576,6 +586,7 @@ TIMEOUT: %4d
                 print('Full log written to %s' % self.logfilename)
         finally:
             os.chdir(startdir)
+        #print(datetime.datetime.now(), 'Finished run_tests')
 
     def drain_futures(self, futures):
         for i in futures:
@@ -622,6 +633,7 @@ def rebuild_all(wd):
     return True
 
 def run(args):
+    #print(datetime.datetime.now(), 'Started run')
     options = parser.parse_args(args)
 
     if options.benchmark:
@@ -658,7 +670,9 @@ def run(args):
             list_tests(th)
             return 0
         if not options.args:
-            return th.doit()
+            rt = th.doit()
+            #print(datetime.datetime.now(), 'Finished run')
+            return rt
         return th.run_special()
     except TestException as e:
         print('Meson test encountered an error:\n')

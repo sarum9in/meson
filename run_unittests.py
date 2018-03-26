@@ -49,6 +49,11 @@ from run_tests import ensure_backend_detects_changes, run_configure, meson_exe
 from run_tests import should_run_linux_cross_tests
 
 
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s')
+log = logging.getLogger('test_testsetup_selection')
+
+
 def get_dynamic_section_entry(fname, entry):
     if is_cygwin() or is_osx():
             raise unittest.SkipTest('Test only applicable to ELF platforms')
@@ -520,22 +525,29 @@ class BasePlatformTests(unittest.TestCase):
         super().tearDown()
 
     def _run(self, command, workdir=None):
-        '''
-        Run a command while printing the stdout and stderr to stdout,
-        and also return a copy of it
-        '''
-        # If this call hangs CI will just abort. It is very hard to distinguish
-        # between CI issue and test bug in that case. Set timeout and fail loud
-        # instead.
-        p = subprocess.run(command, stdout=subprocess.PIPE,
-                           stderr=subprocess.STDOUT, env=os.environ.copy(),
-                           universal_newlines=True, cwd=workdir, timeout=60 * 5)
-        print(p.stdout)
-        if p.returncode != 0:
-            if 'MESON_SKIP_TEST' in p.stdout:
-                raise unittest.SkipTest('Project requested skipping.')
-            raise subprocess.CalledProcessError(p.returncode, command)
-        return p.stdout
+        try:
+            '''
+            Run a command while printing the stdout and stderr to stdout,
+            and also return a copy of it
+            '''
+            # If this call hangs CI will just abort. It is very hard to distinguish
+            # between CI issue and test bug in that case. Set timeout and fail loud
+            # instead.
+            log.warning('tick')
+            p = subprocess.run(command, stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT, env=os.environ.copy(),
+                               universal_newlines=True, cwd=workdir, timeout=60 * 5)
+            print(p.stdout)
+            log.warning('tick')
+            if p.returncode != 0:
+                if 'MESON_SKIP_TEST' in p.stdout:
+                    raise unittest.SkipTest('Project requested skipping.')
+                raise subprocess.CalledProcessError(p.returncode, command)
+            log.warning('tick')
+            return p.stdout
+        except:
+            log.warning('tick')
+            raise
 
     def init(self, srcdir, extra_args=None, default_args=True, inprocess=False):
         self.assertPathExists(srcdir)
@@ -981,29 +993,46 @@ class AllPlatformTests(BasePlatformTests):
         self._run(self.mtest_command + ['--setup=timeout'])
 
     def test_testsetup_selection(self):
+        log.warning('tick')
         testdir = os.path.join(self.unit_test_dir, '13 testsetup selection')
         self.init(testdir)
         self.build()
+        log.warning('tick')
 
         # Run tests without setup
         self.run_tests()
+        log.warning('tick')
 
         self.assertRaises(subprocess.CalledProcessError, self._run, self.mtest_command + ['--setup=missingfromfoo'])
+        log.warning('tick')
         self._run(self.mtest_command + ['--setup=missingfromfoo', '--no-suite=foo:'])
+        log.warning('tick')
 
+        log.warning('tick')
         self._run(self.mtest_command + ['--setup=worksforall'])
+        log.warning('tick')
         self._run(self.mtest_command + ['--setup=main:worksforall'])
+        log.warning('tick')
 
-        self.assertRaises(subprocess.CalledProcessError, self._run,
-                          self.mtest_command + ['--setup=onlyinbar'])
+        for i in range(50):
+            log.warning('tick')
+            self.assertRaises(subprocess.CalledProcessError, self._run,
+                              self.mtest_command + ['--setup=onlyinbar'])
+            log.warning('tick')
+        log.warning('tick')
         self.assertRaises(subprocess.CalledProcessError, self._run,
                           self.mtest_command + ['--setup=onlyinbar', '--no-suite=main:'])
+        log.warning('tick')
         self._run(self.mtest_command + ['--setup=onlyinbar', '--no-suite=main:', '--no-suite=foo:'])
+        log.warning('tick')
         self._run(self.mtest_command + ['--setup=bar:onlyinbar'])
+        log.warning('tick')
         self.assertRaises(subprocess.CalledProcessError, self._run,
                           self.mtest_command + ['--setup=foo:onlyinbar'])
+        log.warning('tick')
         self.assertRaises(subprocess.CalledProcessError, self._run,
                           self.mtest_command + ['--setup=main:onlyinbar'])
+        log.warning('tick')
 
     def assertFailedTestCount(self, failure_count, command):
         try:
@@ -1925,13 +1954,20 @@ class FailureTests(BasePlatformTests):
     dnf = "[Dd]ependency.*not found"
 
     def setUp(self):
+        log.warning('tick')
         super().setUp()
+        log.warning('tick')
         self.srcdir = os.path.realpath(tempfile.mkdtemp())
+        log.warning('tick')
         self.mbuild = os.path.join(self.srcdir, 'meson.build')
+        log.warning('tick')
 
     def tearDown(self):
+        log.warning('tick')
         super().tearDown()
+        log.warning('tick')
         windows_proof_rmtree(self.srcdir)
+        log.warning('tick')
 
     def assertMesonRaises(self, contents, match, extra_args=None, langs=None):
         '''
@@ -2911,3 +2947,4 @@ if __name__ == '__main__':
         cases += ['WindowsTests']
 
     unittest.main(defaultTest=cases, buffer=True)
+    # unittest.main(defaultTest=cases)
