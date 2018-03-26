@@ -244,6 +244,7 @@ class TestHarness:
         return env
 
     def run_single_test(self, test):
+        print(datetime.datetime.now(), 'Start single test')
         if test.fname[0].endswith('.jar'):
             cmd = ['java', '-jar'] + test.fname
         elif not test.is_cross_built and run_with_mono(test.fname[0]):
@@ -379,6 +380,7 @@ class TestHarness:
             returncode = p.returncode
         result = TestRun(res, returncode, test.should_fail, duration, stdo, stde, cmd, test.env)
 
+        print(datetime.datetime.now(), 'End single test')
         return result
 
     def print_stats(self, numlen, tests, name, result, i):
