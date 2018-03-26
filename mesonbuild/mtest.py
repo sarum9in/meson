@@ -312,7 +312,7 @@ class TestHarness:
 
             # Uncommenting this makes "fixes" the bug o.O
             #print('run test stdout =', stdout, 'stderr =', stderr)
-            #print('run test')
+            #print(datetime.datetime.now(), 'run test')
             p = subprocess.Popen(cmd,
                                  stdout=stdout,
                                  stderr=stderr,
@@ -443,7 +443,7 @@ TIMEOUT: %4d
         if not tests:
             return 0
         self.run_tests(tests)
-        #print(datetime.datetime.now(), 'Finished doit')
+        print(datetime.datetime.now(), 'Finished doit')
         return self.fail_count
 
     @staticmethod
@@ -549,6 +549,7 @@ TIMEOUT: %4d
             return test.name
 
     def run_tests(self, tests):
+        print(datetime.datetime.now(), 'Start run_tests')
         executor = None
         futures = []
         numlen = len('%d' % len(tests))
@@ -578,24 +579,35 @@ TIMEOUT: %4d
                 if self.options.repeat > 1 and self.fail_count:
                     break
 
+            print(datetime.datetime.now(), 'Before drain')
             self.drain_futures(futures)
+            print(datetime.datetime.now(), 'After drain')
             self.print_summary()
             self.print_collected_logs()
+            print(datetime.datetime.now(), 'After logs')
 
             if self.logfilename:
                 print('Full log written to %s' % self.logfilename)
         finally:
             os.chdir(startdir)
-        #print(datetime.datetime.now(), 'Finished run_tests')
+        print(datetime.datetime.now(), 'Finished run_tests')
 
     def drain_futures(self, futures):
+        print(datetime.datetime.now(), 'Drain start', len(futures))
         for i in futures:
+            print(datetime.datetime.now(), 'Drain iteration')
             (result, numlen, tests, name, i) = i
+            print(datetime.datetime.now(), 'Drain assigned', i)
             if self.options.repeat > 1 and self.fail_count:
+                print(datetime.datetime.now(), 'Drain cancel', i)
                 result.cancel()
             if self.options.verbose:
+                print(datetime.datetime.now(), 'Drain result', i)
                 result.result()
+            print(datetime.datetime.now(), 'Drain stats', i)
             self.print_stats(numlen, tests, name, result.result(), i)
+            print(datetime.datetime.now(), 'Drain after stats', i)
+        print(datetime.datetime.now(), 'Drain end')
 
     def run_special(self):
         'Tests run by the user, usually something like "under gdb 1000 times".'
@@ -633,7 +645,7 @@ def rebuild_all(wd):
     return True
 
 def run(args):
-    #print(datetime.datetime.now(), 'Started run')
+    print(datetime.datetime.now(), 'Started run')
     options = parser.parse_args(args)
 
     if options.benchmark:
@@ -671,7 +683,7 @@ def run(args):
             return 0
         if not options.args:
             rt = th.doit()
-            #print(datetime.datetime.now(), 'Finished run')
+            print(datetime.datetime.now(), 'Finished run')
             return rt
         return th.run_special()
     except TestException as e:
