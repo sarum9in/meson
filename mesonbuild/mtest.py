@@ -244,7 +244,7 @@ class TestHarness:
         return env
 
     def run_single_test(self, test):
-        print(datetime.datetime.now(), 'Start single test')
+        print(datetime.datetime.now(), 'Start single test', test.name)
         if test.fname[0].endswith('.jar'):
             cmd = ['java', '-jar'] + test.fname
         elif not test.is_cross_built and run_with_mono(test.fname[0]):
@@ -260,6 +260,7 @@ class TestHarness:
             else:
                 cmd = test.fname
 
+        print(datetime.datetime.now(), 'Before cmd single test', test.name)
         if cmd is None:
             res = 'SKIP'
             duration = 0.0
@@ -267,6 +268,7 @@ class TestHarness:
             stde = None
             returncode = GNU_SKIP_RETURNCODE
         else:
+            print(datetime.datetime.now(), 'In cmd single test', test.name)
             test_opts = deepcopy(self.options)
             test_env = self.get_test_env(test_opts, test)
             wrap = self.get_wrapper(test_opts)
@@ -311,6 +313,7 @@ class TestHarness:
                     # errors avoid not being able to use the terminal.
                     os.setsid()
 
+            print(datetime.datetime.now(), 'Before Popen single test', test.name)
             # Uncommenting this makes "fixes" the bug o.O
             #print('run test stdout =', stdout, 'stderr =', stderr)
             #print(datetime.datetime.now(), 'run test')
@@ -320,6 +323,7 @@ class TestHarness:
                                  env=test_env,
                                  cwd=test.workdir,
                                  preexec_fn=preexec_fn if not is_windows() else None)
+            print(datetime.datetime.now(), 'After Popen single test', test.name)
             timed_out = False
             kill_test = False
             if test.timeout is None:
@@ -380,7 +384,7 @@ class TestHarness:
             returncode = p.returncode
         result = TestRun(res, returncode, test.should_fail, duration, stdo, stde, cmd, test.env)
 
-        print(datetime.datetime.now(), 'End single test')
+        print(datetime.datetime.now(), 'End single test', test.name)
         return result
 
     def print_stats(self, numlen, tests, name, result, i):
