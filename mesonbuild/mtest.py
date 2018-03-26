@@ -273,31 +273,40 @@ class TestHarness:
             test_env = self.get_test_env(test_opts, test)
             wrap = self.get_wrapper(test_opts)
 
+            print(datetime.datetime.now(), 'In cmd single test [1]', test.name)
             if test_opts.gdb:
                 test.timeout = None
 
+            print(datetime.datetime.now(), 'In cmd single test [2]', test.name)
             cmd = wrap + cmd + test.cmd_args + self.options.test_args
             starttime = time.time()
 
+            print(datetime.datetime.now(), 'In cmd single test [3]', test.name)
             if len(test.extra_paths) > 0:
                 test_env['PATH'] = os.pathsep.join(test.extra_paths + ['']) + test_env['PATH']
 
+            print(datetime.datetime.now(), 'In cmd single test [4]', test.name)
             # If MALLOC_PERTURB_ is not set, or if it is set to an empty value,
             # (i.e., the test or the environment don't explicitly set it), set
             # it ourselves. We do this unconditionally for regular tests
             # because it is extremely useful to have.
             # Setting MALLOC_PERTURB_="0" will completely disable this feature.
             if ('MALLOC_PERTURB_' not in test_env or not test_env['MALLOC_PERTURB_']) and not self.options.benchmark:
+                print(datetime.datetime.now(), 'In cmd single test [malloc]', test.name)
                 test_env['MALLOC_PERTURB_'] = str(random.randint(1, 255))
 
+            print(datetime.datetime.now(), 'In cmd single test [5]', test.name)
             stdout = None
             stderr = None
             if not self.options.verbose:
+                print(datetime.datetime.now(), 'In cmd single test [verbose]', test.name)
                 stdout = subprocess.PIPE
                 stderr = subprocess.PIPE if self.options and self.options.split else subprocess.STDOUT
 
+            print(datetime.datetime.now(), 'In cmd single test [6]', test.name)
             # Let gdb handle ^C instead of us
             if test_opts.gdb:
+                print(datetime.datetime.now(), 'In cmd single test [gdb]', test.name)
                 previous_sigint_handler = signal.getsignal(signal.SIGINT)
                 # Make the meson executable ignore SIGINT while gdb is running.
                 signal.signal(signal.SIGINT, signal.SIG_IGN)
