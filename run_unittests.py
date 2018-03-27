@@ -545,8 +545,8 @@ class BasePlatformTests(unittest.TestCase):
                 raise subprocess.CalledProcessError(p.returncode, command)
             log.warning('tick')
             return p.stdout
-        except:
-            log.warning('tick')
+        except Exception as exc:
+            log.warning('tick exception %s', type(exc))
             raise
 
     def init(self, srcdir, extra_args=None, default_args=True, inprocess=False):

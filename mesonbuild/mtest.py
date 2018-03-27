@@ -592,7 +592,8 @@ TIMEOUT: %4d
             return test.name
 
     def run_tests(self, tests):
-        print(datetime.datetime.now(), 'Start run_tests, options =', self.options)
+        #print(datetime.datetime.now(), 'Start run_tests, options =', self.options)
+        print(datetime.datetime.now(), 'Start run_tests')
         executor = None
         futures = []
         numlen = len('%d' % len(tests))
