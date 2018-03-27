@@ -234,13 +234,19 @@ class TestHarness:
         return current.env.get_env(os.environ.copy())
 
     def get_test_env(self, options, test):
+        print(datetime.datetime.now(), 'Begin get_test_env single test', test.name)
         if options.setup:
+            print(datetime.datetime.now(), 'get_test_env merge_suite_options single test', test.name)
             env = self.merge_suite_options(options, test)
         else:
+            print(datetime.datetime.now(), 'get_test_env environ.copy() single test', test.name)
             env = os.environ.copy()
+        print(datetime.datetime.now(), 'Middle get_test_env single test', test.name)
         if isinstance(test.env, build.EnvironmentVariables):
+            print(datetime.datetime.now(), 'get_test_env get_env single test', test.name)
             test.env = test.env.get_env(env)
         env.update(test.env)
+        print(datetime.datetime.now(), 'End get_test_env single test', test.name)
         return env
 
     def run_single_test(self, test):
@@ -270,7 +276,9 @@ class TestHarness:
         else:
             print(datetime.datetime.now(), 'In cmd single test', test.name)
             test_opts = deepcopy(self.options)
+            print(datetime.datetime.now(), 'In cmd single test [-1]', test.name)
             test_env = self.get_test_env(test_opts, test)
+            print(datetime.datetime.now(), 'In cmd single test [0]', test.name)
             wrap = self.get_wrapper(test_opts)
 
             print(datetime.datetime.now(), 'In cmd single test [1]', test.name)
