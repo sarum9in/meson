@@ -253,7 +253,7 @@ class TestHarness:
         return ret
 
     def get_test_env(self, options, test):
-        print(datetime.datetime.now(), 'Begin get_test_env single test', test.name)
+        print(datetime.datetime.now(), 'Begin get_test_env single test', test.name, 'options =', options)
         if options.setup:
             print(datetime.datetime.now(), 'get_test_env merge_suite_options single test', test.name)
             env = self.merge_suite_options(options, test)
@@ -591,7 +591,7 @@ TIMEOUT: %4d
             return test.name
 
     def run_tests(self, tests):
-        print(datetime.datetime.now(), 'Start run_tests')
+        print(datetime.datetime.now(), 'Start run_tests, options =', self.options)
         executor = None
         futures = []
         numlen = len('%d' % len(tests))
