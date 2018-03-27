@@ -536,7 +536,7 @@ class BasePlatformTests(unittest.TestCase):
             log.warning('tick')
             p = subprocess.run(command, stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT, env=os.environ.copy(),
-                               universal_newlines=True, cwd=workdir, timeout=60 * 5)
+                               universal_newlines=True, cwd=workdir, timeout=60)
             print(p.stdout)
             log.warning('tick')
             if p.returncode != 0:
