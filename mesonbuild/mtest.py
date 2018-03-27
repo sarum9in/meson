@@ -212,26 +212,45 @@ class TestHarness:
             self.jsonlogfile.close()
 
     def merge_suite_options(self, options, test):
+        print(datetime.datetime.now(), 'Begin merge_suite_options single test', test.name)
         if ":" in options.setup:
+            print(datetime.datetime.now(), 'merge_suite_options [20] single test', test.name)
             if options.setup not in self.build_data.test_setups:
+                print(datetime.datetime.now(), 'merge_suite_options [21] single test', test.name)
                 sys.exit("Unknown test setup '%s'." % options.setup)
+            print(datetime.datetime.now(), 'merge_suite_options [22] single test', test.name)
             current = self.build_data.test_setups[options.setup]
         else:
+            print(datetime.datetime.now(), 'merge_suite_options [23] single test', test.name)
             full_name = test.project_name + ":" + options.setup
+            print(datetime.datetime.now(), 'merge_suite_options [24] single test', test.name)
             if full_name not in self.build_data.test_setups:
+                print(datetime.datetime.now(), 'merge_suite_options [25] single test', test.name)
                 sys.exit("Test setup '%s' not found from project '%s'." % (options.setup, test.project_name))
+            print(datetime.datetime.now(), 'merge_suite_options [26] single test', test.name)
             current = self.build_data.test_setups[full_name]
+        print(datetime.datetime.now(), 'merge_suite_options [30] single test', test.name)
         if not options.gdb:
             options.gdb = current.gdb
+        print(datetime.datetime.now(), 'merge_suite_options [40] single test', test.name)
         if options.timeout_multiplier is None:
+            print(datetime.datetime.now(), 'merge_suite_options [41] single test', test.name)
             options.timeout_multiplier = current.timeout_multiplier
+        print(datetime.datetime.now(), 'merge_suite_options [50] single test', test.name)
     #    if options.env is None:
     #        options.env = current.env # FIXME, should probably merge options here.
+        print(datetime.datetime.now(), 'merge_suite_options [50] single test', test.name)
         if options.wrapper is not None and current.exe_wrapper is not None:
+            print(datetime.datetime.now(), 'merge_suite_options [51] single test', test.name)
             sys.exit('Conflict: both test setup and command line specify an exe wrapper.')
+        print(datetime.datetime.now(), 'merge_suite_options [60] single test', test.name)
         if options.wrapper is None:
+            print(datetime.datetime.now(), 'merge_suite_options [61] single test', test.name)
             options.wrapper = current.exe_wrapper
-        return current.env.get_env(os.environ.copy())
+        print(datetime.datetime.now(), 'merge_suite_options [70] single test', test.name)
+        ret = current.env.get_env(os.environ.copy())
+        print(datetime.datetime.now(), 'End merge_suite_options single test', test.name)
+        return ret
 
     def get_test_env(self, options, test):
         print(datetime.datetime.now(), 'Begin get_test_env single test', test.name)
