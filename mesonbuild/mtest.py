@@ -253,7 +253,8 @@ class TestHarness:
         return ret
 
     def get_test_env(self, options, test):
-        print(datetime.datetime.now(), 'Begin get_test_env single test', test.name, 'options =', options)
+        print(datetime.datetime.now(), 'Begin get_test_env single test', test.name)
+        #print(datetime.datetime.now(), 'Begin get_test_env single test', test.name, 'options =', options)
         if options.setup:
             print(datetime.datetime.now(), 'get_test_env merge_suite_options single test', test.name)
             env = self.merge_suite_options(options, test)
