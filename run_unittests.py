@@ -1014,7 +1014,7 @@ class AllPlatformTests(BasePlatformTests):
         self._run(self.mtest_command + ['--setup=main:worksforall'])
         log.warning('tick')
 
-        for i in range(50):
+        for i in range(100):
             log.warning('tick')
             self.assertRaises(subprocess.CalledProcessError, self._run,
                               self.mtest_command + ['--setup=onlyinbar'])
