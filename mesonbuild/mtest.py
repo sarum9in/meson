@@ -223,7 +223,7 @@ class TestHarness:
         else:
             print(datetime.datetime.now(), 'merge_suite_options [23] single test', test.name)
             full_name = test.project_name + ":" + options.setup
-            print(datetime.datetime.now(), 'merge_suite_options [24] single test', test.name)
+            print(datetime.datetime.now(), 'merge_suite_options [24] single test', test.name, 'full_name =', full_name, 'test_setups =', self.build_data.test_setups)
             if full_name not in self.build_data.test_setups:
                 print(datetime.datetime.now(), 'merge_suite_options [25] single test', test.name)
                 sys.exit("Test setup '%s' not found from project '%s'." % (options.setup, test.project_name))
