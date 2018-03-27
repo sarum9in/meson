@@ -691,7 +691,6 @@ def rebuild_all(wd):
 def run(args):
     print(datetime.datetime.now(), 'Started run')
     options = parser.parse_args(args)
-    print(datetime.datetime.now(), 'run() options =', options)
 
     if options.benchmark:
         options.num_processes = 1
