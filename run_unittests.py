@@ -993,8 +993,9 @@ class AllPlatformTests(BasePlatformTests):
         self._run(self.mtest_command + ['--setup=worksforall'])
         self._run(self.mtest_command + ['--setup=main:worksforall'])
 
-        self.assertRaises(subprocess.CalledProcessError, self._run,
-                          self.mtest_command + ['--setup=onlyinbar'])
+        for i in range(100):
+            self.assertRaises(subprocess.CalledProcessError, self._run,
+                              self.mtest_command + ['--setup=onlyinbar'])
         self.assertRaises(subprocess.CalledProcessError, self._run,
                           self.mtest_command + ['--setup=onlyinbar', '--no-suite=main:'])
         self._run(self.mtest_command + ['--setup=onlyinbar', '--no-suite=main:', '--no-suite=foo:'])
