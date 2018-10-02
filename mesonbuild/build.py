@@ -339,7 +339,8 @@ a hard error in the future.''' % name)
         h = hashlib.sha1()
         h.update(target_id.encode(encoding='utf-8', errors='replace'))
         # urlsafe_b64encode() is safe for filesystems
-        return base64.urlsafe_b64encode(h.digest()).decode(encoding='utf-8')
+        b64 = base64.urlsafe_b64encode(h.digest()).decode(encoding='utf-8')
+        return b64.rstrip('=') # remove padding
 
     @staticmethod
     def construct_id_from_path(subdir, name, type_suffix):
