@@ -339,7 +339,8 @@ a hard error in the future.''' % name)
         h = hashlib.sha1()
         h.update(target_id.encode(encoding='utf-8', errors='replace'))
         # urlsafe_b64encode() is safe for filesystems
-        return base64.urlsafe_b64encode(h.digest()).decode(encoding='utf-8')
+        # but not for Visual Studio, base32 is shorter than hex and safe
+        return base64.b32encode(h.digest()).decode(encoding='utf-8')
 
     @staticmethod
     def construct_id_from_path(subdir, name, type_suffix):
