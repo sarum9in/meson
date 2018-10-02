@@ -2752,11 +2752,11 @@ recommended as it is not supported on some platforms''')
         # changes of target ID generation.
         target_id = Target.construct_id_from_path('some/obscure/subdir',
                                                   'target-id', '@suffix')
-        expected_id = 'Hts615QSZ6kAW7r63hz2KBX6h9o@@target-id@suffix'
+        expected_id = '1edb3ad7941267a9005bbafade1cf62815fa87da@@target-id@suffix'
         self.assertEqual(expected_id, target_id)
         target_id = Target.construct_id_from_path('subproject/foo/subdir/bar',
                                                   'target2-id', '@other')
-        expected_id = 'mTHyZDseWXpVbz1iIMssEfG38k0@@target2-id@other'
+        expected_id = '9931f2643b1e597a556f3d6220cb2c11f1b7f24d@@target2-id@other'
         self.assertEqual(expected_id, target_id)
 
 

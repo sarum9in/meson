@@ -338,9 +338,7 @@ a hard error in the future.''' % name)
         # Small-digest hash function with unlikely collision is good enough.
         h = hashlib.sha1()
         h.update(target_id.encode(encoding='utf-8', errors='replace'))
-        # urlsafe_b64encode() is safe for filesystems
-        b64 = base64.urlsafe_b64encode(h.digest()).decode(encoding='utf-8')
-        return b64.rstrip('=') # remove padding
+        return h.hexdigest()
 
     @staticmethod
     def construct_id_from_path(subdir, name, type_suffix):
